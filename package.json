@@ -3,11 +3,11 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "nuxt build client",
-		"dev": "nuxt dev client",
-		"generate": "nuxt generate client",
-		"preview": "nuxt preview client",
-		"postinstall": "nuxt prepare client"
+		"build": "TMPDIR=/tmp nuxt build --dotenv ./.env client",
+		"dev": "TMPDIR=/tmp nuxt dev --dotenv ./.env client",
+		"generate": "TMPDIR=/tmp nuxt generate --dotenv ./.env client",
+		"preview": "TMPDIR=/tmp nuxt preview --dotenv ./.env client",
+		"postinstall": "TMPDIR=/tmp nuxt prepare --dotenv ./.env client"
 	},
 	"devDependencies": {
 		"@iconify-json/material-symbols": "^1.2.17",
@@ -23,12 +23,12 @@
 	},
 	"dependencies": {
 		"@nuxt/icon": "^1.11.0",
-		"@pinia/nuxt": "^0.10.1",
+		"@pinia/nuxt": "^0.11.0",
 		"buffer": "^6.0.3",
 		"libphonenumber-js": "^1.12.6",
 		"lodash-es": "^4.17.21",
 		"node-forge": "^1.3.1",
-		"nuxt": "^3.16.2",
+		"nuxt": "^4.0.0",
 		"ofetch": "^1.4.1",
 		"pinia": "^3.0.1",
 		"tailwindcss": "^4.1.3",
