@@ -1,12 +1,12 @@
 <template>
-	<div class="secret-field" :class="{ secure: field.secure, visible }">
+	<div class="secret-field" :class="{ secure: field.isSecure, visible }">
 		<UiLabel class="mb-1.5" v-if="field.label">{{ field.label }}</UiLabel>
 		<div class="flex space-x-2">
 			<div class="w-full flex-1 relative rounded-lg py-3 px-3 bg-gray-50 dark:bg-gray-900">
 				<span class="secret-field-content">{{ field.value }}</span>
 
 				<div class="absolute inset-0 pr-12 p-2 pointer-events-none">
-					<UiSpoilerContent class="spoiler w-full h-full" v-if="field.secure" />
+					<UiSpoilerContent class="spoiler w-full h-full" v-if="field.isSecure" />
 				</div>
 
 				<div class="absolute right-0 inset-y-0 z-10 flex">
@@ -27,7 +27,7 @@
 				</transition>
 			</div>
 
-			<UiClickable class="show-spoiler-content-btn w-7 self-stretch flex items-center justify-center" v-if="field.secure" @click="forceVisible = !forceVisible">
+			<UiClickable class="show-spoiler-content-btn w-7 self-stretch flex items-center justify-center" v-if="field.isSecure" @click="forceVisible = !forceVisible">
 				<EyeSlashIcon class="w-5 text-gray-500 -mt-px" v-if="forceVisible" />
 				<EyeIcon class="w-5 text-gray-500" v-else />
 			</UiClickable>
@@ -48,7 +48,6 @@
 
 <script setup lang="ts">
 
-import type { SecretField } from '~/repositories/adapters/secret-adapter'
 import { computed, ref } from 'vue'
 import { isUrl as _isUrl, hasHttpProtocol } from '~/utils/helpers'
 import EyeIcon from '~/assets/svg/Monochrome=eye.fill.svg'
@@ -58,7 +57,7 @@ import UiLabel from '~/components/ui/Label.vue'
 import UiSpoilerContent from '~/components/ui/SpoilerContent.vue'
 
 interface FieldViewProps {
-	field: SecretField
+	field: App.Nodes.DocumentField
 }
 
 const props = defineProps<FieldViewProps>()
@@ -70,7 +69,7 @@ const isUrl = computed(() => _isUrl(props.field.value))
 const url = computed(() => {
 	return hasHttpProtocol(props.field.value) ? props.field.value : `https://${props.field.value}`
 })
-const visible = computed(() => !props.field.secure || forceVisible.value)
+const visible = computed(() => !props.field.isSecure || forceVisible.value)
 
 const copy = async () => {
 	try {

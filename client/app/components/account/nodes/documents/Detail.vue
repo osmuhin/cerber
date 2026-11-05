@@ -10,7 +10,7 @@
 		</div>
 
 		<div class="mt-8 space-y-4">
-			<CustomFieldView v-for="field in secret.fields" :field="field" :key="field.clientCode" />
+			<CustomFieldView v-for="field in secret.fields" :field="field" :key="field.id" />
 		</div>
 
 		<div class="mt-10 flex justify-between items-center">
@@ -32,16 +32,15 @@
 
 <script setup lang="ts">
 
-import type { Secret } from '~/repositories/adapters/secret-adapter'
 import UiClickable from '~/components/ui/Clickable.vue'
 import TrashIcon from '~/assets/svg/Monochrome=trash.fill.svg'
-import CustomFieldView from '~/components/account/secrets/FieldView.vue'
-import SecretIcon from '~/components/account/secrets/list/SecretIcon.vue'
+import CustomFieldView from '~/components/account/nodes/documents/FieldView.vue'
+import SecretIcon from '~/components/account/nodes/list/SecretIcon.vue'
 import { computed } from 'vue'
 import { formatDate, formatTime } from '~/utils/date'
 
 interface SecretViewProps {
-	secret: Secret
+	secret: App.Nodes.Document
 }
 
 const props = defineProps<SecretViewProps>()

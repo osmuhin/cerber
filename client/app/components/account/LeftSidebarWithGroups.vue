@@ -73,8 +73,8 @@
 import UiClickable from '~/components/ui/Clickable.vue'
 import Search from '~/components/account/Search.vue'
 import ClockIcon from '~/assets/svg/Monochrome=clock.fill.svg'
-import SecretGroup from 'client.old/components/account/secrets/SecretGroup.vue'
-import GroupModalCreate from '~/components/account/secrets/group/ModalCreate.vue'
+import SecretGroup from '~/components/account/nodes/groups/SecretGroupPreview.vue'
+import GroupModalCreate from '~/components/account/nodes/groups/ModalCreate.vue'
 import { ref } from '#imports'
 
 const showCreateGroupModal = ref(false)
