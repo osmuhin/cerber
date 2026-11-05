@@ -1,8 +1,9 @@
-FROM php:8.4-fpm-alpine3.20
+FROM php:8.5-fpm-alpine
 
-RUN curl -fsSL -o /usr/local/bin/install-php-extensions \
-	https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions \
-	&& chmod +x /usr/local/bin/install-php-extensions \
-	&& install-php-extensions gd bcmath zip redis xdebug pdo_mysql pcntl
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+RUN install-php-extensions gd bcmath zip redis xdebug pdo_mysql pcntl
+
+RUN curl -sS https://getcomposer.org/installer \
+	| php -- --install-dir=/usr/local/bin --filename=composer \
+	&& composer --version

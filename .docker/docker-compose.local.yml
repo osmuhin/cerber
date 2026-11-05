@@ -1,0 +1,83 @@
+# Only for local development
+name: cerber
+
+services:
+  php:
+    build: ./php
+    volumes:
+      - ../:/app
+      - ../storage/composer:/.composer/cache
+      - ./php/php.ini:/usr/local/etc/php/conf.d/php.ini:ro
+    working_dir: /app
+    user: $USER_ID:$GROUP_ID
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ../:/app:ro
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    working_dir: /app
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - php
+    networks:
+      default:
+        aliases:
+          - api.nginx
+
+  mariadb:
+    image: mariadb:12
+    volumes:
+      - ../storage/mariadb:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: ${DB_DATABASE}
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 1G
+    ports:
+      - 8080:80
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 10
+
+  nodejs:
+    build: ./nodejs
+    volumes:
+      - ../:/app
+    working_dir: /app
+    user: $USER_ID:$GROUP_ID
+    profiles:
+      - node

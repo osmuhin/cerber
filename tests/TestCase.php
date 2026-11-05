@@ -6,13 +6,24 @@ use App\Models\Auth\Grant;
 use App\Models\Auth\PasswordGrant;
 use App\Models\User;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
 
 abstract class TestCase extends BaseTestCase
 {
-	use CreatesApplication;
+	public function createApplication()
+	{
+		$app = require __DIR__.'/../app/app.php';
+
+		putenv('APP_ROUTES_CACHE');
+		unset($_ENV['APP_ROUTES_CACHE'], $_SERVER['APP_ROUTES_CACHE']);
+
+		$app->make(Kernel::class)->bootstrap();
+
+		return $app;
+	}
 
 	public function setUp(): void
 	{
@@ -26,7 +37,7 @@ abstract class TestCase extends BaseTestCase
 		/** @var \Database\Factories\Auth\PasswordGrantFactory */
 		$passwordGrantFactory = PasswordGrant::factory()->state([
 			'login' => $login ?: fake()->userName(),
-			'password' => $password ?: fake()->password()
+			'password' => $password ?: fake()->password(),
 		]);
 
 		/** @var \Database\Factories\Auth\GrantFactory */

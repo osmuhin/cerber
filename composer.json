@@ -1,18 +1,25 @@
 {
+	"$schema": "https://getcomposer.org/schema.json",
+	"name": "osmuhin/cerber",
+	"type": "project",
+	"description": "Cerber application",
+	"keywords": ["laravel", "framework"],
+	"license": "proprietary",
 	"require": {
 		"php": "^8.3",
-		"guzzlehttp/guzzle": "^7.9",
-		"laravel/framework": "^12.9",
-		"laravel/prompts": "^0.3.5",
+		"laravel/framework": "^13.17",
+		"laravel/prompts": "^0.3",
+		"laravel/tinker": "^3.0",
 		"lcobucci/jwt": "^5.5",
 		"osmuhin/html-meta": "^1.1"
 	},
 	"require-dev": {
-		"fakerphp/faker": "^1.24",
+		"fakerphp/faker": "^1.23",
+		"laravel/pail": "^1.2.5",
+		"laravel/pint": "^1.27",
 		"mockery/mockery": "^1.6",
-		"nunomaduro/collision": "^8.8",
-		"phpunit/phpunit": "^12.1",
-		"spatie/laravel-ignition": "^2.9"
+		"nunomaduro/collision": "^8.6",
+		"phpunit/phpunit": "^12.5.12"
 	},
 	"autoload": {
 		"psr-4": {

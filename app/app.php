@@ -1,55 +1,71 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
-$app = new Illuminate\Foundation\Application(
-	$_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
-);
+$bootstrapCache = __DIR__.'/../storage/framework/bootstrap';
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+putenv('APP_SERVICES_CACHE='.$bootstrapCache.'/services.php');
+putenv('APP_PACKAGES_CACHE='.$bootstrapCache.'/packages.php');
+putenv('APP_CONFIG_CACHE='.$bootstrapCache.'/config.php');
+putenv('APP_ROUTES_CACHE='.$bootstrapCache.'/routes-v7.php');
+putenv('APP_EVENTS_CACHE='.$bootstrapCache.'/events.php');
+
+AliasLoader::getInstance();
+
+$app = Application::configure(basePath: dirname(__DIR__))
+	->withProviders([
+		\App\Providers\AppServiceProvider::class,
+		\App\Providers\AuthServiceProvider::class,
+	])
+	->withRouting(
+		web: __DIR__.'/web.php',
+		api: __DIR__.'/api.php',
+		commands: __DIR__.'/console.php',
+		health: '/up',
+		apiPrefix: '',
+	)
+	->withCommands([
+		__DIR__.'/Console/Commands',
+	])
+	->withMiddleware(function (Middleware $middleware): void {
+		$middleware->use([
+			\Illuminate\Http\Middleware\TrustHosts::class,
+			\Illuminate\Http\Middleware\TrustProxies::class,
+			\Illuminate\Http\Middleware\HandleCors::class,
+			\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class,
+			\App\Http\Middleware\DecryptRequest::class,
+			\Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+			\Illuminate\Foundation\Http\Middleware\TrimStrings::class,
+			\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+		]);
+
+		$middleware->api(prepend: [
+			\Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+		]);
+
+		$middleware->api(append: [
+			\App\Http\Middleware\HasUserAgent::class,
+		]);
+
+		$middleware->alias([
+			'encrypt-response' => \App\Http\Middleware\EncryptResponse::class,
+		]);
+	})
+	->withExceptions(function (Exceptions $exceptions): void {
+		$exceptions->shouldRenderJsonWhen(
+			fn (Request $request) => $request->expectsJson(),
+		);
+	})
+	->create()
+	->useBootstrapPath(__DIR__);
 
 $app->singleton(
-	Illuminate\Contracts\Http\Kernel::class,
-	App\Http\Kernel::class
+	\Illuminate\Contracts\Debug\ExceptionHandler::class,
+	\App\Exceptions\Handler::class,
 );
-
-$app->singleton(
-	Illuminate\Contracts\Console\Kernel::class,
-	App\Console\Kernel::class
-);
-
-$app->singleton(
-	Illuminate\Contracts\Debug\ExceptionHandler::class,
-	App\Exceptions\Handler::class
-);
-
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
 
 return $app;
