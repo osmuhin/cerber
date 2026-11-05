@@ -3,11 +3,11 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "TMPDIR=/tmp nuxt build --dotenv ./.env client",
-		"dev": "TMPDIR=/tmp nuxt dev --dotenv ./.env client",
-		"generate": "TMPDIR=/tmp nuxt generate --dotenv ./.env client",
-		"preview": "TMPDIR=/tmp nuxt preview --dotenv ./.env client",
-		"postinstall": "TMPDIR=/tmp nuxt prepare --dotenv ./.env client"
+		"build": "nuxt build --dotenv ./.env client",
+		"dev": "nuxt dev --dotenv ./.env client",
+		"generate": "nuxt generate --dotenv ./.env client",
+		"preview": "nuxt preview --dotenv ./.env client",
+		"postinstall": "nuxt prepare --dotenv ./.env client"
 	},
 	"devDependencies": {
 		"@iconify-json/material-symbols": "^1.2.17",

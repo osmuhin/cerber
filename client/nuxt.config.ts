@@ -39,7 +39,7 @@ export default defineNuxtConfig({
 		public: {
 			storageBaseUrl: process.env.STORAGE_URL,
 			apiBaseUrl: process.env.CLIENT_API_URL,
-			disableHttpEncryption: process.env.DISABLE_HTTP_ENCRYPTION,
+			disableHttpEncryption: process.env.APP_DISABLE_HTTP_ENCRYPTION,
 			consoleLogDecryptedResponse: process.env.CONSOLE_LOG_DECRYPTED_RESPONSE
 		},
 		apiBaseUrl: process.env.SERVER_API_URL
